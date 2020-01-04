@@ -6,58 +6,23 @@
 //
 
 import SwifQL
-import SQL
-import DatabaseKit
-import PostgreSQL
-import MySQL
+import SwifQLNIO
+import Vapor
+import FluentKit
+import PostgresKit
 
 extension SwifQLable {
-    public func execute<C>(on conn: C) -> SQLRawBuilder<C> where C: PostgreSQLConnection {
-        return execute(on: conn, as: .psql)
+    @discardableResult
+    public func execute(on database: PostgresDatabase) throws -> EventLoopFuture<[PostgresRow]> {
+        let prepared = prepare(.psql).splitted
+        return database.query(prepared.query, try prepared.values.map { try PostgresDataEncoder().encode($0) })
     }
-    
-    public func execute<C>(on conn: C) -> SQLRawBuilder<C> where C: MySQLConnection {
-        return execute(on: conn, as: .mysql)
-    }
-    
-    public func execute<D: PostgreSQLDatabase>(on container: Container, as identifier: DatabaseKit.DatabaseIdentifier<D>) -> Future<SQLRawBuilder<D.Connection>> {
-        return container.requestPooledConnection(to: identifier).flatMap { conn in
-            defer { try? container.releasePooledConnection(conn, to: identifier) }
-            return container.eventLoop.newSucceededFuture(result: self.execute(on: conn))
-        }
-    }
-    
-    public func execute<D: MySQLDatabase>(on container: Container, as identifier: DatabaseKit.DatabaseIdentifier<D>) -> Future<SQLRawBuilder<D.Connection>> {
-        return container.requestPooledConnection(to: identifier).flatMap { conn in
-            defer { try? container.releasePooledConnection(conn, to: identifier) }
-            return container.eventLoop.newSucceededFuture(result: self.execute(on: conn))
-        }
-    }
-    
-    public func run<C>(on conn: C) -> Future<Void> where C: PostgreSQLConnection {
-        return execute(on: conn, as: .psql).run()
-    }
-    
-    public func run<C>(on conn: C) -> Future<Void> where C: MySQLConnection {
-        return execute(on: conn, as: .mysql).run()
-    }
-    
-    public func run<D: PostgreSQLDatabase>(on container: Container, as identifier: DatabaseKit.DatabaseIdentifier<D>) -> Future<Void> {
-        return container.requestPooledConnection(to: identifier).flatMap { conn in
-            defer { try? container.releasePooledConnection(conn, to: identifier) }
-            return self.run(on: conn)
-        }
-    }
-    
-    public func run<D: MySQLDatabase>(on container: Container, as identifier: DatabaseKit.DatabaseIdentifier<D>) -> Future<Void> {
-        return container.requestPooledConnection(to: identifier).flatMap { conn in
-            defer { try? container.releasePooledConnection(conn, to: identifier) }
-            return self.run(on: conn)
-        }
-    }
-    
-    fileprivate func execute<C>(on conn: C, as dialect: SQLDialect) -> SQLRawBuilder<C> where C: SQLConnectable {
-        let prepared = prepare(dialect).splitted
-        return conn.raw(prepared.query).binds(prepared.values)
-    }
+}
+
+public protocol SwifQLTable: Model, Tableable, Reflectable {
+    static var entity: String { get }
+}
+
+extension SwifQLTable {
+    public static var entity: String { schema }
 }
