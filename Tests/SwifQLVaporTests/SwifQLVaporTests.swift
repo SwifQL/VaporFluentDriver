@@ -1,14 +1,30 @@
 import XCTest
+import Fluent
+import Vapor
 import SwifQL
 @testable import SwifQLVapor
 
 final class SwifQLVaporTests: XCTestCase {
-    struct CarBrands: SwifQLTable {
-        static var entity: String { return "CarBrands" }
+    final class CarBrands: Model, Content, SwifQLTable {
+        static let schema = "Car_brands"
         
-        var id: UUID
+        static var entity: String { schema }
+        
+        @ID(key: "id")
+        var id: UUID?
+
+        @Field(key: "name")
         var name: String
-        var createdAt: Date
+        
+        @Field(key: "createdAt")
+        var createdAt: Date?
+
+        init() { }
+
+        init(id: UUID? = nil, name: String) {
+            self.id = id
+            self.name = name
+        }
     }
     
     let cb = CarBrands.as("cb")
@@ -23,18 +39,18 @@ final class SwifQLVaporTests: XCTestCase {
     }
     
     func testSelectCarBrands() {
-        checkAllDialects(SwifQL.select(\CarBrands.id), pg: """
-            SELECT "CarBrands"."id"
+        checkAllDialects(SwifQL.select(\CarBrands.id, \CarBrands.$name), pg: """
+            SELECT "Car_brands"."id", "Car_brands"."name"
             """, mySQL: """
-            SELECT CarBrands.id
+            SELECT Car_brands.id, Car_brands.name
             """)
     }
     
     func testSelectCarBrandsSeveralFields() {
-        checkAllDialects(SwifQL.select(\CarBrands.id, \CarBrands.name), pg: """
-            SELECT "CarBrands"."id", "CarBrands"."name"
+        checkAllDialects(SwifQL.select(\CarBrands.id, \CarBrands.name, \CarBrands.$createdAt), pg: """
+            SELECT "Car_brands"."id", "Car_brands"."name", "Car_brands"."createdAt"
             """, mySQL: """
-            SELECT CarBrands.id, CarBrands.name
+            SELECT Car_brands.id, Car_brands.name, Car_brands.createdAt
             """)
     }
     
@@ -55,10 +71,10 @@ final class SwifQLVaporTests: XCTestCase {
     }
     
     func testSelectCarBrandsSeveralFieldsMixed() {
-        checkAllDialects(SwifQL.select(\CarBrands.id, cb~\.name, \CarBrands.createdAt), pg: """
-            SELECT "CarBrands"."id", "cb"."name", "CarBrands"."createdAt"
+        checkAllDialects(SwifQL.select(\CarBrands.$id, cb~\.name, \CarBrands.createdAt), pg: """
+            SELECT "Car_brands"."id", "cb"."name", "Car_brands"."createdAt"
             """, mySQL: """
-            SELECT CarBrands.id, cb.name, CarBrands.createdAt
+            SELECT Car_brands.id, cb.name, Car_brands.createdAt
             """)
     }
 
