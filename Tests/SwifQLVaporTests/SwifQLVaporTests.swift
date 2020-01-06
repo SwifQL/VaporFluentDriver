@@ -5,6 +5,8 @@ import SwifQL
 @testable import SwifQLVapor
 
 final class SwifQLVaporTests: XCTestCase {
+    // MARK: Vapor Fluent model
+    
     final class CarBrands: Model, Content, SwifQLTable {
         static let schema = "Car_brands"
         
@@ -77,6 +79,59 @@ final class SwifQLVaporTests: XCTestCase {
             SELECT Car_brands.id, cb.name, Car_brands.createdAt
             """)
     }
+    
+    // MARK: Hand made model
+    
+    struct CarModels: Codable, Reflectable, Tableable {
+        static var entity: String { return "CarModels" }
+        
+        var id: UUID
+        var brandId: UUID
+        var name: String
+        var createdAt: Date
+    }
+    
+    let cm = CarModels.as("cm")
+    
+    func testSelectCarModels() {
+        checkAllDialects(SwifQL.select(\CarModels.id), pg: """
+            SELECT "CarModels"."id"
+            """, mySQL: """
+            SELECT CarModels.id
+            """)
+    }
+    
+    func testSelectCarModelsSeveralFields() {
+        checkAllDialects(SwifQL.select(\CarModels.id, \CarModels.name), pg: """
+            SELECT "CarModels"."id", "CarModels"."name"
+            """, mySQL: """
+            SELECT CarModels.id, CarModels.name
+            """)
+    }
+    
+    func testSelectCarModelsWithAlias() {
+        checkAllDialects(SwifQL.select(cm~\.id), pg: """
+            SELECT "cm"."id"
+            """, mySQL: """
+            SELECT cm.id
+            """)
+    }
+    
+    func testSelectCarModelsWithAliasSeveralFields() {
+        checkAllDialects(SwifQL.select(cm~\.id, cm~\.name), pg: """
+            SELECT "cm"."id", "cm"."name"
+            """, mySQL: """
+            SELECT cm.id, cm.name
+            """)
+    }
+    
+    func testSelectCarModelsSeveralFieldsMixed() {
+        checkAllDialects(SwifQL.select(\CarModels.id, cm~\.name, \CarModels.createdAt), pg: """
+            SELECT "CarModels"."id", "cm"."name", "CarModels"."createdAt"
+            """, mySQL: """
+            SELECT CarModels.id, cm.name, CarModels.createdAt
+            """)
+    }
 
     static var allTests = [
         ("testSelectCarBrands", testSelectCarBrands),
@@ -84,5 +139,11 @@ final class SwifQLVaporTests: XCTestCase {
         ("testSelectCarBrandsWithAlias", testSelectCarBrandsWithAlias),
         ("testSelectCarBrandsWithAliasSeveralFields", testSelectCarBrandsWithAliasSeveralFields),
         ("testSelectCarBrandsSeveralFieldsMixed", testSelectCarBrandsSeveralFieldsMixed),
+        
+        ("testSelectCarModels", testSelectCarModels),
+        ("testSelectCarModelsSeveralFields", testSelectCarModelsSeveralFields),
+        ("testSelectCarModelsWithAlias", testSelectCarModelsWithAlias),
+        ("testSelectCarModelsWithAliasSeveralFields", testSelectCarModelsWithAliasSeveralFields),
+        ("testSelectCarModelsSeveralFieldsMixed", testSelectCarModelsSeveralFieldsMixed),
     ]
 }
