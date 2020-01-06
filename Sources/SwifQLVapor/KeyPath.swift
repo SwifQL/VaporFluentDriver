@@ -100,7 +100,7 @@ extension KeyPath where Root: Reflectable {
 extension KeyPath: SwifQLPart {}
 
 extension KeyPath: SwifQLKeyPathable where Root: Reflectable {
-    public var table: String { return extractTable(Root.self) }
+    public var table: String? { return extractTable(Root.self) }
 }
 
 extension KeyPath: CustomStringConvertible where Root: Reflectable {}
