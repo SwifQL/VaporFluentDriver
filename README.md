@@ -8,8 +8,6 @@
     <img src="https://img.shields.io/github/workflow/status/MihaelIsaev/SwifQLVapor/test" alt="Github Actions">
 </p>
 
-<br>
-
 # SwifQLVapor
 
 Additional lib for SwifQL library
