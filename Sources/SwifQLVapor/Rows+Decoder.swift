@@ -8,11 +8,19 @@
 import PostgresKit
 
 extension EventLoopFuture where Value == [PostgresRow] {
-    public func first<R>(as type: R.Type) throws -> EventLoopFuture<R?> where R: Decodable {
+    public func first<R>(as type: R.Type) -> EventLoopFuture<R?> where R: Decodable {
         flatMapThrowing { try $0.first(as: type) }
     }
     
-    public func all<R>(as type: R.Type) throws -> EventLoopFuture<[R]> where R: Decodable {
+    public func first<R>(decoding type: R.Type) -> EventLoopFuture<R?> where R: Decodable {
+        flatMapThrowing { try $0.first(as: type) }
+    }
+    
+    public func all<R>(as type: R.Type) -> EventLoopFuture<[R]> where R: Decodable {
+        flatMapThrowing { try $0.all(as: type) }
+    }
+    
+    public func all<R>(decoding type: R.Type) -> EventLoopFuture<[R]> where R: Decodable {
         flatMapThrowing { try $0.all(as: type) }
     }
 }

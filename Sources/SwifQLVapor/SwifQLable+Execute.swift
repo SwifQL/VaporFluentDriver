@@ -13,9 +13,13 @@ import PostgresKit
 
 extension SwifQLable {
     @discardableResult
-    public func execute(on database: PostgresDatabase) throws -> EventLoopFuture<[PostgresRow]> {
+    public func execute(on database: PostgresDatabase) -> EventLoopFuture<[PostgresRow]> {
         let prepared = prepare(.psql).splitted
-        return database.query(prepared.query, try prepared.values.map { try PostgresDataEncoder().encode($0) })
+        return database.eventLoop.future().flatMapThrowing {
+            try prepared.values.map { try PostgresDataEncoder().encode($0) }
+        }.flatMap { values in
+            database.query(prepared.query, values)
+        }
     }
 }
 
