@@ -10,7 +10,10 @@ import SwifQL
 import SwifQLNIO
 import FluentKit
 
-extension KeyPath: FluentKitFieldable where Root: FluentKit.Model, Value: FieldRepresentable {
+extension KeyPath: FluentKitFieldable where Root: FluentKit.Model, Value: QueryField {
     public var schema: String { Root.schema }
-    public var key: String { Root.key(for: self) }
+	public var key: String {
+		return Root.path(for: self).first!.description
+	}
 }
+
