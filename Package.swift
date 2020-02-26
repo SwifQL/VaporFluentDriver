@@ -18,7 +18,7 @@ let package = Package(
         .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0-beta.2"),
         .package(url: "https://github.com/vapor/fluent.git", from: "4.0.0-beta.2"),
         .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.0.0-beta.2"),
-        .package(url: "https://github.com/vapor/fluent-mysql-driver.git", from: "4.0.0-beta.2"),
+        //.package(url: "https://github.com/vapor/fluent-mysql-driver.git", from: "4.0.0-beta.2"),
         ],
     targets: [
         .target(name: "SwifQLVapor", dependencies: ["NIO", "SwifQL", "SwifQLNIO", "Fluent", "FluentPostgresDriver", "Vapor"]),
