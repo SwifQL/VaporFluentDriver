@@ -13,7 +13,10 @@ import FluentKit
 extension KeyPath: FluentKitFieldable where Root: FluentKit.Model, Value: QueryField {
     public var schema: String { Root.schema }
 	public var key: String {
-		return Root.path(for: self).first!.description
+		guard let first = Root.path(for: self).first else {
+			return ""
+		}
+		return first.description
 	}
 }
 
