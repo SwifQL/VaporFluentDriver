@@ -7,6 +7,7 @@
     </a>
     <img src="https://img.shields.io/github/workflow/status/MihaelIsaev/SwifQLVapor/test" alt="Github Actions">
 </p>
+<p align="center"><a href="https://discord.gg/q5wCPYv">SWIFT.STREAM COMMUNITY IN DISCORD</a></p>
 
 # SwifQLVapor
 
