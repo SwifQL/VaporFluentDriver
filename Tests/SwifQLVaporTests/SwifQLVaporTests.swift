@@ -7,6 +7,12 @@ import SwifQL
 final class SwifQLVaporTests: XCTestCase {
     // MARK: Vapor Fluent model
     
+    enum BrandType: String, Codable, SwifQLable {
+        case local, foreign
+        
+        var parts: [SwifQLPart] { [SwifQLPartOperator("'\(rawValue)'")] }
+    }
+    
     final class CarBrands: Model, Content, SwifQLTable {
         static let schema = "Car_brands"
         
@@ -17,6 +23,9 @@ final class SwifQLVaporTests: XCTestCase {
 
         @Field(key: "name")
         var name: String
+        
+        @Enum(key: "type")
+        var type: BrandType
         
         @Field(key: "createdAt")
         var createdAt: Date?
@@ -38,6 +47,14 @@ final class SwifQLVaporTests: XCTestCase {
         if let mySQL = mySQL {
             XCTAssertEqual(query.prepare(.mysql).plain, mySQL)
         }
+    }
+    
+    func testEnumInWhereClause() {
+        checkAllDialects(SwifQL.where(\CarBrands.$type == BrandType.local), pg: """
+            WHERE "Car_brands"."type" = 'local'
+            """, mySQL: """
+            WHERE Car_brands.type = 'local'
+            """)
     }
     
     func testSelectCarBrands() {
