@@ -19,6 +19,8 @@ extension SwifQLable {
             try prepared.values.map { try PostgresDataEncoder().encode($0) }
         }.flatMap { values in
             database.query(prepared.query, values)
+        }.map {
+            $0.rows
         }
     }
 }
