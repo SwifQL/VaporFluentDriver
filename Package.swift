@@ -4,12 +4,12 @@
 import PackageDescription
 
 let package = Package(
-    name: "SwifQLVapor",
+    name: "VaporFluentDriver",
     platforms: [
        .macOS(.v10_15)
     ],
     products: [
-        .library(name: "SwifQLVapor", targets: ["SwifQLVapor"]),
+        .library(name: "VaporFluentDriver", targets: ["VaporFluentDriver"]),
         ],
         dependencies: [
         .package(url: "https://github.com/MihaelIsaev/SwifQL.git", from:"1.0.0"),
