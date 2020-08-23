@@ -10,7 +10,7 @@ import SwifQL
 import SwifQLNIO
 import FluentKit
 
-extension KeyPath: FluentKitFieldable where Root: FluentKit.Model, Value: FieldProtocol {
+extension KeyPath: FluentKitFieldable where Root: FluentKit.Model, Value: QueryableProperty {
     public var schema: String { Root.schema }
 	public var key: String {
 		guard let first = Root.path(for: self).first else {
