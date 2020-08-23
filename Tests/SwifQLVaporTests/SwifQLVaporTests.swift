@@ -2,7 +2,7 @@ import XCTest
 import Fluent
 import Vapor
 import SwifQL
-@testable import SwifQLVapor
+@testable import VaporFluentDriver
 
 final class SwifQLVaporTests: XCTestCase {
     // MARK: Vapor Fluent model

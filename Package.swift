@@ -20,7 +20,7 @@ let package = Package(
         .package(url: "https://github.com/vapor/fluent-mysql-driver.git", from: "4.0.0"),
         ],
     targets: [
-        .target(name: "SwifQLVapor", dependencies: [
+        .target(name: "VaporFluentDriver", dependencies: [
             .product(name: "SwifQL", package: "SwifQL"),
             .product(name: "SwifQLNIO", package: "SwifQLNIO"),
             .product(name: "Fluent", package: "fluent"),
@@ -28,7 +28,7 @@ let package = Package(
             .product(name: "Vapor", package: "vapor"),
         ]),
         .testTarget(name: "SwifQLVaporTests", dependencies: [
-            .target(name: "SwifQLVapor")
+            .target(name: "VaporFluentDriver")
         ]),
     ]
 )
