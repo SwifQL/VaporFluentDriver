@@ -58,7 +58,7 @@ final class SwifQLVaporTests: XCTestCase {
     }
     
     func testSelectCarBrands() {
-        checkAllDialects(SwifQL.select(\CarBrands.id, \CarBrands.$name), pg: """
+        checkAllDialects(SwifQL.select(\CarBrands.$id, \CarBrands.$name), pg: """
             SELECT "Car_brands"."id", "Car_brands"."name"
             """, mySQL: """
             SELECT Car_brands.id, Car_brands.name
@@ -66,7 +66,7 @@ final class SwifQLVaporTests: XCTestCase {
     }
     
     func testSelectCarBrandsSeveralFields() {
-        checkAllDialects(SwifQL.select(\CarBrands.id, \CarBrands.name, \CarBrands.$createdAt), pg: """
+        checkAllDialects(SwifQL.select(\CarBrands.$id, \CarBrands.$name, \CarBrands.$createdAt), pg: """
             SELECT "Car_brands"."id", "Car_brands"."name", "Car_brands"."createdAt"
             """, mySQL: """
             SELECT Car_brands.id, Car_brands.name, Car_brands.createdAt
@@ -74,7 +74,7 @@ final class SwifQLVaporTests: XCTestCase {
     }
     
     func testSelectCarBrandsWithAlias() {
-        checkAllDialects(SwifQL.select(cb~\.id), pg: """
+        checkAllDialects(SwifQL.select(cb~\.$id), pg: """
             SELECT "cb"."id"
             """, mySQL: """
             SELECT cb.id
@@ -82,7 +82,7 @@ final class SwifQLVaporTests: XCTestCase {
     }
     
     func testSelectCarBrandsWithAliasSeveralFields() {
-        checkAllDialects(SwifQL.select(cb~\.id, cb~\.name), pg: """
+        checkAllDialects(SwifQL.select(cb~\.$id, cb~\.$name), pg: """
             SELECT "cb"."id", "cb"."name"
             """, mySQL: """
             SELECT cb.id, cb.name
@@ -90,7 +90,7 @@ final class SwifQLVaporTests: XCTestCase {
     }
     
     func testSelectCarBrandsSeveralFieldsMixed() {
-        checkAllDialects(SwifQL.select(\CarBrands.$id, cb~\.name, \CarBrands.createdAt), pg: """
+        checkAllDialects(SwifQL.select(\CarBrands.$id, cb~\.$name, \CarBrands.$createdAt), pg: """
             SELECT "Car_brands"."id", "cb"."name", "Car_brands"."createdAt"
             """, mySQL: """
             SELECT Car_brands.id, cb.name, Car_brands.createdAt
